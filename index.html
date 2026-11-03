@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Creando Arte con Figuras Geométricas - Taller Digital</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+  :root{
+    --navy:#16233f;
+    --navy-soft:#22355c;
+    --gold:#b8912f;
+    --gold-light:#d9bc6a;
+    --cream:#faf7f0;
+    --line:#e4dcc8;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    font-family:'Montserrat',sans-serif;
+    background:#efe9dc;
+    color:#2b2b2b;
+    padding:24px 16px;
+    min-height:100vh;
+  }
+
+  .app{
+    max-width:1240px;
+    margin:0 auto;
+    background:#fff;
+    border-radius:6px;
+    overflow:hidden;
+    box-shadow:0 20px 50px rgba(22,35,63,.22);
+  }
+  .app::before{
+    content:"";
+    display:block;
+    height:7px;
+    background:linear-gradient(90deg,var(--navy) 0%,var(--navy) 45%,var(--gold) 45%,var(--gold) 55%,var(--navy) 55%,var(--navy) 100%);
+  }
+
+  /* ---------- CABECERA ---------- */
+  header{
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-soft) 100%);
+    color:#fff;
+    padding:18px 28px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+  }
+  header img{
+    width:54px;height:54px;
+    border:2px solid var(--gold-light);
+    border-radius:50%;
+    object-fit:cover;
+    background:#fff;
+  }
+  .titulos{flex:1;min-width:240px;}
+  header h1{
+    font-family:'Cormorant Garamond',serif;
+    font-size:27px;line-height:1.1;
+  }
+  header .sub{
+    font-size:10.5px;letter-spacing:2.4px;
+    text-transform:uppercase;
+    color:var(--gold-light);
+    margin-top:4px;
+  }
+  .campo-nombre{
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .campo-nombre label{
+    font-size:9px;letter-spacing:2px;
+    text-transform:uppercase;color:var(--gold-light);
+  }
+  .campo-nombre input{
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(217,188,106,.6);
+    border-radius:3px;
+    padding:9px 12px;
+    color:#fff;
+    font-family:'Montserrat',sans-serif;
+    font-size:14px;
+    width:250px;
+    outline:none;
+  }
+  .campo-nombre input::placeholder{color:#9fb0cc;}
+  .campo-nombre input:focus{background:rgba(255,255,255,.2);}
+
+  /* ---------- CUERPO ---------- */
+  .cuerpo{
+    display:grid;
+    grid-template-columns:250px 1fr;
+    min-height:560px;
+  }
+
+  /* ---------- PANEL LATERAL ---------- */
+  aside{
+    background:var(--cream);
+    border-right:1px solid var(--line);
+    padding:20px 18px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  aside h3{
+    font-size:9.5px;
+    letter-spacing:2.6px;
+    text-transform:uppercase;
+    color:var(--navy);
+    border-bottom:1.5px solid var(--gold);
+    padding-bottom:6px;
+    margin-bottom:10px;
+  }
+
+  .formas{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:9px;
+  }
+  .forma-btn{
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:6px;
+    padding:10px 4px 7px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:5px;
+    font-family:'Montserrat',sans-serif;
+    font-size:9.5px;
+    font-weight:600;
+    color:var(--navy);
+    transition:.15s;
+  }
+  .forma-btn:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 5px 12px rgba(0,0,0,.08);}
+  .forma-btn:active{transform:scale(.96);}
+  .forma-btn svg{width:34px;height:34px;}
+
+  .colores{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+  }
+  .color-btn{
+    width:100%;aspect-ratio:1;
+    border-radius:50%;
+    border:2px solid #fff;
+    outline:1.5px solid var(--line);
+    cursor:pointer;
+    transition:.15s;
+  }
+  .color-btn:hover{transform:scale(1.12);}
+  .color-btn.on{outline:2.5px solid var(--navy);transform:scale(1.12);}
+
+  .tamanos{display:flex;gap:8px;}
+  .tam-btn{
+    flex:1;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:6px;
+    padding:9px 0;
+    cursor:pointer;
+    font-family:'Montserrat',sans-serif;
+    font-size:10px;
+    font-weight:700;
+    color:var(--navy);
+    transition:.15s;
+  }
+  .tam-btn:hover{border-color:var(--gold);}
+  .tam-btn.on{background:var(--navy);color:var(--gold-light);border-color:var(--navy);}
+
+  #selTools{
+    display:none;
+    flex-direction:column;
+    gap:7px;
+    background:#fff;
+    border:1.5px dashed var(--gold);
+    border-radius:6px;
+    padding:11px;
+  }
+  #selTools.on{display:flex;}
+  #selTools .t{
+    font-size:9px;letter-spacing:1.6px;
+    text-transform:uppercase;color:var(--gold);
+    font-weight:700;text-align:center;
+  }
+  .tool-btn{
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    border-radius:4px;
+    padding:9px;
+    cursor:pointer;
+    font-family:'Montserrat',sans-serif;
+    font-size:11px;
+    font-weight:600;
+    transition:.15s;
+  }
+  .tool-btn:hover{background:var(--navy-soft);}
+  .tool-btn.rojo{background:#a33a2c;}
+  .tool-btn.rojo:hover{background:#8a2f23;}
+  .tool-btn.dorado{background:var(--gold);}
+  .tool-btn.dorado:hover{background:#a17f24;}
+
+  .acciones{display:flex;flex-direction:column;gap:8px;margin-top:auto;}
+
+  .pista{
+    font-size:10.5px;
+    line-height:1.6;
+    color:#666;
+    background:#fff;
+    border-left:3px solid var(--navy);
+    padding:9px 10px;
+    border-radius:0 4px 4px 0;
+  }
+
+  /* ---------- LIENZO ---------- */
+  .zona-lienzo{padding:20px;display:flex;flex-direction:column;gap:12px;}
+
+  #ws{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/10;
+    border:2.5px solid var(--navy);
+    border-radius:6px;
+    overflow:hidden;
+    touch-action:none;
+    cursor:crosshair;
+    background:linear-gradient(#cfe6ff 0%,#eaf4ff 62%,#f7fbff 100%);
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  #bg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+  #layer{position:absolute;inset:0;}
+
+  .shape{
+    position:absolute;
+    cursor:grab;
+    filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));
+  }
+  .shape:active{cursor:grabbing;}
+  .shape svg{width:100%;height:100%;display:block;pointer-events:none;}
+  .shape.sel::after{
+    content:"";
+    position:absolute;
+    inset:-7px;
+    border:2.5px dashed var(--gold);
+    border-radius:8px;
+    pointer-events:none;
+    animation:spin 9s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .barra-inferior{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    font-size:10.5px;
+    color:#777;
+  }
+  .barra-inferior .paso{
+    background:var(--cream);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:7px 15px;
+    color:var(--navy);
+    font-weight:600;
+    letter-spacing:.4px;
+  }
+
+  footer{
+    background:var(--navy);
+    color:#9fb0cc;
+    text-align:center;
+    font-size:9.5px;
+    letter-spacing:2.4px;
+    text-transform:uppercase;
+    padding:13px;
+  }
+  footer span{color:var(--gold-light);}
+
+  @media (max-width:860px){
+    .cuerpo{grid-template-columns:1fr;}
+    aside{border-right:none;border-bottom:1px solid var(--line);
+      flex-direction:row;flex-wrap:wrap;align-items:flex-start;}
+    aside > div{flex:1;min-width:180px;}
+    .acciones{margin-top:0;}
+    .campo-nombre input{width:100%;}
+    header{gap:12px;}
+  }
+
+  @media print{
+    body{background:#fff;padding:0;}
+    .app{box-shadow:none;}
+    aside,.barra-inferior,footer{display:none;}
+    .cuerpo{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header>
+    <img src="escudo-UASD.jpg" alt="UASD">
+    <div class="titulos">
+      <h1>Creando Arte con Figuras Geométricas</h1>
+      <div class="sub">Actividad 3 &nbsp;·&nbsp; Pre-primario &nbsp;·&nbsp; Arrastrar y soltar</div>
+    </div>
+    <div class="campo-nombre">
+      <label for="nombre">Nombre del niño o niña</label>
+      <input id="nombre" type="text" placeholder="Escribe tu nombre aquí...">
+    </div>
+  </header>
+
+  <div class="cuerpo">
+
+    <!-- PANEL LATERAL -->
+    <aside>
+      <div>
+        <h3>1. Elige la forma</h3>
+        <div class="formas" id="formas">
+          <button class="forma-btn" data-type="circle">
+            <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="#e4572e"/></svg>
+            Círculo
+          </button>
+          <button class="forma-btn" data-type="square">
+            <svg viewBox="0 0 40 40"><rect x="5" y="5" width="30" height="30" rx="2" fill="#5b8fd9"/></svg>
+            Cuadrado
+          </button>
+          <button class="forma-btn" data-type="triangle">
+            <svg viewBox="0 0 40 40"><polygon points="20,5 36,34 4,34" fill="#4a7c59"/></svg>
+            Triángulo
+          </button>
+          <button class="forma-btn" data-type="rect">
+            <svg viewBox="0 0 40 40"><rect x="3" y="11" width="34" height="18" rx="2" fill="#b8912f"/></svg>
+            Rectángulo
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <h3>2. Elige el color</h3>
+        <div class="colores" id="colores"></div>
+      </div>
+
+      <div>
+        <h3>3. Elige el tamaño</h3>
+        <div class="tamanos" id="tamanos">
+          <button class="tam-btn" data-size="55">Pequeño</button>
+          <button class="tam-btn on" data-size="85">Mediano</button>
+          <button class="tam-btn" data-size="125">Grande</button>
+        </div>
+      </div>
+
+      <div id="selTools">
+        <div class="t">Figura seleccionada</div>
+        <button class="tool-btn dorado" id="btnGirar">Girar 15°</button>
+        <button class="tool-btn" id="btnDup">Duplicar</button>
+        <button class="tool-btn rojo" id="btnDel">Eliminar</button>
+      </div>
+
+      <div class="acciones">
+        <button class="tool-btn dorado" id="btnGuardar">Guardar imagen (PNG)</button>
+        <button class="tool-btn rojo" id="btnLimpiar">Limpiar lienzo</button>
+        <p class="pista">Toca una forma del panel para ponerla en el lienzo y luego arrástrala hasta donde quieras.</p>
+      </div>
+    </aside>
+
+    <!-- LIENZO -->
+    <section class="zona-lienzo">
+      <div id="ws">
+        <svg id="bg" viewBox="0 0 1600 1000" preserveAspectRatio="none">
+          <circle cx="1420" cy="130" r="72" fill="#f3a712" opacity=".9"/>
+          <circle cx="1420" cy="130" r="100" fill="#f3a712" opacity=".18"/>
+          <path d="M0,860 Q400,760 800,850 T1600,840 L1600,1000 L0,1000 Z" fill="#8fbf7f"/>
+          <path d="M0,910 Q420,840 850,915 T1600,905 L1600,1000 L0,1000 Z" fill="#6ba862"/>
+          <g stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity=".75">
+            <path d="M180,150 h90 M225,105 v90"/>
+            <path d="M520,90 h70 M555,55 v70"/>
+          </g>
+        </svg>
+        <div id="layer"></div>
+      </div>
+
+      <div class="barra-inferior">
+        <span class="paso">Paso 1: toca una forma &nbsp;→&nbsp; Paso 2: arrástrala &nbsp;→&nbsp; Paso 3: repite y crea tu paisaje</span>
+        <span id="contador">0 figuras en el lienzo</span>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    UASD &nbsp;<span>·</span>&nbsp; Tecnología de la Educación Inicial &nbsp;<span>·</span>&nbsp; Actividad 3: Creando Arte con Figuras Geométricas
+  </footer>
+
+</div>
+
+<script>
+  const COLORES = ['#e4572e','#f3a712','#4a7c59','#5b8fd9','#9b5de5','#b5533f','#16233f','#b8912f'];
+
+  const ws    = document.getElementById('ws');
+  const layer = document.getElementById('layer');
+  const tools = document.getElementById('selTools');
+
+  let shapes = [];
+  let sel    = null;
+  let nextId = 1;
+  let color  = COLORES[0];
+  let size   = 85;
+  let drag   = null;
+
+  /* ---------- PALETA DE COLORES ---------- */
+  const boxColores = document.getElementById('colores');
+  COLORES.forEach((c,i)=>{
+    const b = document.createElement('button');
+    b.className = 'color-btn' + (i===0?' on':'');
+    b.style.background = c;
+    b.onclick = ()=>{
+      color = c;
+      document.querySelectorAll('.color-btn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      if(sel){ getShape(sel).color = c; render(); }
+    };
+    boxColores.appendChild(b);
+  });
+
+  /* ---------- TAMAÑO ---------- */
+  document.querySelectorAll('.tam-btn').forEach(b=>{
+    b.onclick = ()=>{
+      size = +b.dataset.size;
+      document.querySelectorAll('.tam-btn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      if(sel){
+        const s = getShape(sel);
+        const f = size / (s.w > s.h ? s.w : s.h) * (s.type==='rect'?1.4:1);
+        s.w *= f; s.h *= f;
+        render();
+      }
+    };
+  });
+
+  /* ---------- AÑADIR FORMA ---------- */
+  document.querySelectorAll('.forma-btn').forEach(b=>{
+    b.onclick = ()=> addShape(b.dataset.type);
+  });
+
+  function dims(type, s){
+    if(type==='circle')  return {w:s,   h:s};
+    if(type==='square')  return {w:s,   h:s};
+    if(type==='triangle')return {w:s*1.15, h:s};
+    return {w:s*1.5, h:s*0.95};           /* rect */
+  }
+
+  function addShape(type){
+    const r  = ws.getBoundingClientRect();
+    const d  = dims(type, size);
+    const n  = shapes.length;
+    const x  = r.width/2 + ((n%5)-2)*26;
+    const y  = r.height/2 + ((Math.floor(n/5))%4 -1.5)*24;
+    const sh = {id:nextId++, type, color, x, y, w:d.w, h:d.h, rot:0};
+    shapes.push(sh);
+    select(sh.id);
+    render();
+  }
+
+  /* ---------- RENDER ---------- */
+  function svgFor(s){
+    if(s.type==='circle')
+      return `<svg viewBox="0 0 100 100" preserveAspectRatio="none"><circle cx="50" cy="50" r="49" fill="${s.color}"/></svg>`;
+    if(s.type==='square')
+      return `<svg viewBox="0 0 100 100"><rect x="1" y="1" width="98" height="98" rx="4" fill="${s.color}"/></svg>`;
+    if(s.type==='triangle')
+      return `<svg viewBox="0 0 100 100" preserveAspectRatio="none"><polygon points="50,2 98,98 2,98" fill="${s.color}"/></svg>`;
+    return `<svg viewBox="0 0 100 100" preserveAspectRatio="none"><rect x="1" y="1" width="98" height="98" rx="6" fill="${s.color}"/></svg>`;
+  }
+
+  function render(){
+    layer.innerHTML = shapes.map(s=>`
+      <div class="shape${s.id===sel?' sel':''}" data-id="${s.id}"
+           style="left:${s.x - s.w/2}px; top:${s.y - s.h/2}px;
+                  width:${s.w}px; height:${s.h}px;
+                  transform:rotate(${s.rot}deg);">
+        ${svgFor(s)}
+      </div>`).join('');
+    document.getElementById('contador').textContent =
+      shapes.length + (shapes.length===1?' figura en el lienzo':' figuras en el lienzo');
+    tools.classList.toggle('on', sel!==null);
+  }
+
+  function getShape(id){ return shapes.find(s=>s.id===id); }
+
+  function select(id){
+    sel = id;
+    document.querySelectorAll('.shape').forEach(el=>el.classList.remove('sel'));
+    if(id!==null){
+      const el = layer.querySelector(`[data-id="${id}"]`);
+      if(el) el.classList.add('sel');
+    }
+    tools.classList.toggle('on', id!==null);
+  }
+
+  /* ---------- ARRASTRAR ---------- */
+  ws.addEventListener('pointerdown', e=>{
+    const el = e.target.closest('.shape');
+    if(!el){ select(null); return; }
+    const id = +el.dataset.id;
+    select(id);
+    const s  = getShape(id);
+    const r  = ws.getBoundingClientRect();
+    drag = {id, dx:(e.clientX-r.left)-s.x, dy:(e.clientY-r.top)-s.y};
+    ws.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+
+  ws.addEventListener('pointermove', e=>{
+    if(!drag) return;
+    const s = getShape(drag.id);
+    const r = ws.getBoundingClientRect();
+    s.x = Math.min(Math.max((e.clientX-r.left)-drag.dx, 0), r.width);
+    s.y = Math.min(Math.max((e.clientY-r.top)-drag.dy, 0), r.height);
+    const el = layer.querySelector(`[data-id="${s.id}"]`);
+    if(el){ el.style.left = (s.x - s.w/2)+'px'; el.style.top = (s.y - s.h/2)+'px'; }
+  });
+
+  ['pointerup','pointercancel'].forEach(ev=>
+    ws.addEventListener(ev, ()=>{ drag = null; }));
+
+  /* ---------- HERRAMIENTAS ---------- */
+  document.getElementById('btnGirar').onclick = ()=>{
+    if(sel===null) return;
+    const s = getShape(sel);
+    s.rot = (s.rot + 15) % 360;
+    render();
+  };
+  document.getElementById('btnDup').onclick = ()=>{
+    if(sel===null) return;
+    const s = getShape(sel);
+    const c = Object.assign({}, s, {id:nextId++, x:s.x+24, y:s.y+24});
+    shapes.push(c);
+    select(c.id);
+    render();
+  };
+  document.getElementById('btnDel').onclick = ()=>{
+    if(sel===null) return;
+    shapes = shapes.filter(s=>s.id!==sel);
+    sel = null;
+    render();
+  };
+  document.getElementById('btnLimpiar').onclick = ()=>{
+    if(shapes.length && !confirm('¿Borrar todas las figuras del lienzo?')) return;
+    shapes = []; sel = null; render();
+  };
+
+  document.addEventListener('keydown', e=>{
+    if((e.key==='Delete'||e.key==='Backspace') && sel!==null
+       && document.activeElement.tagName!=='INPUT'){
+      e.preventDefault();
+      document.getElementById('btnDel').click();
+    }
+    if(e.key==='Escape') select(null);
+  });
+
+  /* ---------- GUARDAR PNG ---------- */
+  document.getElementById('btnGuardar').onclick = ()=>{
+    const r = ws.getBoundingClientRect();
+    const W = Math.round(r.width), H = Math.round(r.height);
+    const c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const g = c.getContext('2d');
+
+    const sky = g.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,'#cfe6ff'); sky.addColorStop(.62,'#eaf4ff'); sky.addColorStop(1,'#f7fbff');
+    g.fillStyle = sky; g.fillRect(0,0,W,H);
+
+    g.fillStyle = '#f3a712';
+    g.beginPath(); g.arc(W*0.887, H*0.13, H*0.072, 0, Math.PI*2); g.fill();
+
+    g.fillStyle = '#8fbf7f';
+    g.beginPath();
+    g.moveTo(0, H*0.86);
+    g.quadraticCurveTo(W*0.25, H*0.76, W*0.5, H*0.85);
+    g.quadraticCurveTo(W*0.75, H*0.94, W, H*0.84);
+    g.lineTo(W, H); g.lineTo(0, H); g.closePath(); g.fill();
+
+    g.fillStyle = '#6ba862';
+    g.beginPath();
+    g.moveTo(0, H*0.91);
+    g.quadraticCurveTo(W*0.26, H*0.84, W*0.53, H*0.915);
+    g.quadraticCurveTo(W*0.78, H*0.99, W, H*0.905);
+    g.lineTo(W, H); g.lineTo(0, H); g.closePath(); g.fill();
+
+    shapes.forEach(s=>{
+      g.save();
+      g.translate(s.x, s.y);
+      g.rotate(s.rot * Math.PI/180);
+      g.fillStyle = s.color;
+      const w = s.w, h = s.h, x = -w/2, y = -h/2;
+      if(s.type==='circle'){
+        g.beginPath();
+        g.ellipse(0, 0, w/2, h/2, 0, 0, Math.PI*2);
+        g.fill();
+      } else if(s.type==='triangle'){
+        g.beginPath();
+        g.moveTo(0, y);
+        g.lineTo(w/2, y+h);
+        g.lineTo(-w/2, y+h);
+        g.closePath(); g.fill();
+      } else {
+        const rr = Math.min(w,h)*0.05;
+        g.beginPath();
+        if(g.roundRect) g.roundRect(x, y, w, h, rr);
+        else g.rect(x, y, w, h);
+        g.fill();
+      }
+      g.restore();
+    });
+
+    const nom = document.getElementById('nombre').value.trim();
+    g.fillStyle = 'rgba(255,255,255,.85)';
+    g.fillRect(10, H-46, Math.min(W-20, 30+nom.length*15+180), 36);
+    g.fillStyle = '#16233f';
+    g.font = '600 17px Montserrat, Arial, sans-serif';
+    g.fillText('Creando Arte con Figuras Geométricas', 22, H-23);
+    if(nom){
+      g.fillStyle = '#b8912f';
+      g.font = '700 17px Montserrat, Arial, sans-serif';
+      g.textAlign = 'right';
+      g.fillText(nom, W-22, H-23);
+      g.textAlign = 'left';
+    }
+
+    const a = document.createElement('a');
+    a.download = (nom ? nom.replace(/\s+/g,'_') : 'figuras_geometricas') + '.png';
+    a.href = c.toDataURL('image/png');
+    a.click();
+  };
+
+  render();
+</script>
+
+</body>
+</html>
